@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../app/colors.dart';
 
-/// Custom App Bar inspired by modern clean health & lifestyle dashboard designs.
-/// Features user avatar with online badge, greeting with highlight text,
-/// emoji badge, and rounded action buttons (notifications, settings, etc.).
+/// Custom App Bar inspired by modern clean SaaS & lifestyle dashboard designs.
+/// Supports both:
+/// 1. Greeting mode with user avatar & wave emoji (e.g., Welcome back / Tiago 👋).
+/// 2. Header title + subtitle mode (e.g. "Super Admin Dashboard" / "⚡ PulsarHR Root Console")
+/// with actions like notifications, profile avatar, or custom icons.
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String? subtitle;
@@ -20,10 +22,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Color backgroundColor;
   final double elevation;
   final EdgeInsetsGeometry padding;
+  final bool showWaveEmoji;
 
   const CustomAppBar({
     super.key,
-    this.title = 'Welcome back',
+    this.title = 'Super Admin Dashboard',
     this.subtitle,
     this.userName,
     this.avatarUrl,
@@ -38,6 +41,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor = Colors.transparent,
     this.elevation = 0,
     this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+    this.showWaveEmoji = false,
   });
 
   @override
@@ -54,15 +58,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Leading or Profile Avatar
-            if (leading != null)
-              leading!
-            else
-              _buildAvatar(context),
+            // Leading widget if specified
+            if (leading != null) ...[
+              leading!,
+              const SizedBox(width: 12),
+            ],
 
-            const SizedBox(width: 14),
-
-            // Greeting & Name
+            // Title & Subtitle or Greeting & User Name
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -73,36 +75,49 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textSecondary,
-                      letterSpacing: 0.1,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                      letterSpacing: -0.3,
                     ),
                   ),
-                  const SizedBox(height: 2),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          userName ?? 'User',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                            letterSpacing: -0.3,
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary,
+                        letterSpacing: 0.1,
+                      ),
+                    ),
+                  ] else if (userName != null) ...[
+                    const SizedBox(height: 2),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            userName!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 6),
-                      const Text(
-                        '👋',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  ),
+                        if (showWaveEmoji) ...[
+                          const SizedBox(width: 4),
+                          const Text('👋', style: TextStyle(fontSize: 16)),
+                        ],
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -118,10 +133,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 onTap: onNotificationTap,
               ),
               const SizedBox(width: 10),
-              _buildIconButton(
-                icon: Icons.settings_outlined,
-                onTap: onSettingsTap,
-              ),
+              if (onAvatarTap != null || avatarUrl != null || avatarInitials != null)
+                _buildAvatar(context)
+              else
+                _buildIconButton(
+                  icon: Icons.settings_outlined,
+                  onTap: onSettingsTap,
+                ),
             ],
           ],
         ),
@@ -136,8 +154,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         clipBehavior: Clip.none,
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.avatarPlaceholder,
@@ -162,9 +180,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: avatarUrl == null
                 ? Center(
                     child: Text(
-                      avatarInitials ?? 'U',
+                      avatarInitials ?? 'A',
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: AppColors.avatarText,
                       ),
@@ -176,8 +194,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             right: 0,
             bottom: 0,
             child: Container(
-              width: 13,
-              height: 13,
+              width: 12,
+              height: 12,
               decoration: BoxDecoration(
                 color: AppColors.onlineBadge,
                 shape: BoxShape.circle,
@@ -233,14 +251,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               if (hasBadge)
                 Positioned(
                   top: 9,
-                  right: 10,
+                  right: 9,
                   child: Container(
-                    width: 8,
-                    height: 8,
+                    padding: const EdgeInsets.all(2),
                     decoration: const BoxDecoration(
                       color: AppColors.notificationBadge,
                       shape: BoxShape.circle,
                     ),
+                    constraints: const BoxConstraints(
+                      minWidth: 8,
+                      minHeight: 8,
+                    ),
+                    child: badgeCount > 0
+                        ? Text(
+                            '$badgeCount',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : null,
                   ),
                 ),
             ],
