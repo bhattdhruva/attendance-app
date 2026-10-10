@@ -8,6 +8,7 @@ import '../../../widgets/cards.dart';
 import '../../../widgets/listtile.dart';
 import '../../../widgets/animated_pulse.dart';
 import '../../../widgets/searchbar.dart';
+import '../../../app/routes.dart';
 
 class HomeTab extends StatelessWidget {
   final DashboardController controller;
@@ -285,8 +286,10 @@ class HomeTab extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                children: [
+                              GestureDetector(
+                                onTap: () => controller.changeTab(3),
+                                child: Row(
+                                  children: [
                                   const CircleAvatar(
                                     radius: 24,
                                     backgroundColor: Colors.white24,
@@ -306,7 +309,8 @@ class HomeTab extends StatelessWidget {
                                       ),
                                     ],
                                   )),
-                                ],
+                                  ],
+                                ),
                               ),
                               Row(
                                 children: [

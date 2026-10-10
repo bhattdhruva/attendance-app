@@ -6,6 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
+const path = require('path');
 
 // Load env vars
 dotenv.config();
@@ -24,6 +25,9 @@ app.use(express.json());
 // Cookie parser
 app.use(cookieParser());
 
+// Serve static uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Rate limiting for auth routes to prevent brute force
 const authLimiter = rateLimit({
@@ -41,6 +45,7 @@ app.use(cors({
 // Mount routers
 app.use('/api/v1/auth', authLimiter, require('./routes/authRoutes'));
 app.use('/api/v1/dashboard', require('./routes/dashboardRoutes'));
+app.use('/api/v1/profile', require('./routes/profileRoutes'));
 
 app.get('/', (req, res) => {
   res.send('Attendance API is running securely...');

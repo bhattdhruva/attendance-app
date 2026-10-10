@@ -133,7 +133,19 @@ exports.changePassword = async (req, res, next) => {
     }
 
     // Verify current password
-    const isMatch = await argon2.verify(admin.passwordHash, currentPassword);
+    console.log('--- CHANGE PASSWORD DEBUG ---');
+    console.log('Admin ID:', admin._id);
+    console.log('Received currentPassword:', currentPassword);
+    console.log('DB Hash:', admin.passwordHash);
+    
+    let isMatch = false;
+    try {
+      isMatch = await argon2.verify(admin.passwordHash, currentPassword);
+      console.log('Argon2 Verify result:', isMatch);
+    } catch(e) {
+      console.log('Argon2 Verify error:', e);
+    }
+    
     if (!isMatch) {
       await AuthAuditLog.create({
         adminId: admin._id,

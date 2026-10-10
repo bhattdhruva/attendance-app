@@ -15,6 +15,7 @@ class ApiEndpoints {
   static const String mfaDisable = '/auth/mfa/disable';
   static const String getMe = '/auth/me';
   static const String dashboard = '/dashboard/superadmin';
+  static const String profile = '/profile';
 
   // Future Attendance endpoints can go here
   static const String checkIn = '/attendance/check-in';

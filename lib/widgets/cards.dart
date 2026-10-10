@@ -83,3 +83,130 @@ class CustomActionCard extends StatelessWidget {
     );
   }
 }
+
+class NotificationCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final Color bgColor;
+  final String title;
+  final String time;
+  final String description;
+  final String actionText;
+  final VoidCallback onActionTap;
+  final bool isUnread;
+  final bool showDivider;
+
+  const NotificationCard({
+    Key? key,
+    required this.icon,
+    required this.iconColor,
+    required this.bgColor,
+    required this.title,
+    required this.time,
+    required this.description,
+    required this.actionText,
+    required this.onActionTap,
+    this.isUnread = false,
+    this.showDivider = true,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Unread Dot indicator area
+              SizedBox(
+                width: 12,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: isUnread
+                      ? Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.notifUnreadDot,
+                          ),
+                        )
+                      : null,
+                ),
+              ),
+              // Icon Box
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: iconColor, size: 20),
+              ),
+              const SizedBox(width: 12),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.inkDark,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          time,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.neutralGrey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      description,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.neutralGrey,
+                        height: 1.4,
+                      ),
+                    ),
+                    if (actionText.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: onActionTap,
+                        child: Text(
+                          actionText,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.accentBlueDark,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (showDivider)
+          const Divider(height: 1, color: Color(0x1A8385A1), indent: 60),
+      ],
+    );
+  }
+}
+

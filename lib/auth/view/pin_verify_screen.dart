@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/pin_controller.dart';
 import '../../app/colors.dart';
+import '../../widgets/appbar.dart';
 
 class PinVerifyScreen extends StatelessWidget {
+  // ignore: use_super_parameters
   const PinVerifyScreen({Key? key}) : super(key: key);
 
   @override
@@ -18,10 +20,17 @@ class PinVerifyScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: CustomAppBar(
+        title: 'Verify PIN',
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.inkDark, size: 20),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            const Spacer(),
+            const SizedBox(height: 24),
             
             // Profile Header
             Container(
@@ -89,6 +98,7 @@ class PinVerifyScreen extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: isFilled 
                         ? AppColors.primaryViolet 
+                        // ignore: deprecated_member_use
                         : (controller.hasError.value ? AppColors.accentRedDark.withOpacity(0.3) : const Color(0x338385A1)),
                   ),
                 );

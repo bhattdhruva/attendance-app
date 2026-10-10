@@ -15,6 +15,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onAvatarTap;
   final List<Widget>? actions;
   final Widget? leading;
+  final bool showNotificationIcon;
   final bool showNotificationBadge;
   final int notificationCount;
   final VoidCallback? onNotificationTap;
@@ -34,6 +35,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onAvatarTap,
     this.actions,
     this.leading,
+    this.showNotificationIcon = true,
     this.showNotificationBadge = true,
     this.notificationCount = 0,
     this.onNotificationTap,
@@ -126,17 +128,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (actions != null)
               ...actions!
             else ...[
-              _buildIconButton(
-                icon: Icons.notifications_none_rounded,
-                hasBadge: showNotificationBadge,
-                badgeCount: notificationCount,
-                onTap: onNotificationTap,
-              ),
-              const SizedBox(width: 10),
+              if (showNotificationIcon) ...[
+                buildActionIcon(
+                  icon: Icons.notifications_none_rounded,
+                  hasBadge: showNotificationBadge,
+                  badgeCount: notificationCount,
+                  onTap: onNotificationTap,
+                ),
+                const SizedBox(width: 10),
+              ],
               if (onAvatarTap != null || avatarUrl != null || avatarInitials != null)
-                _buildAvatar(context)
+                buildAvatar(
+                  context,
+                  onAvatarTap: onAvatarTap,
+                  avatarUrl: avatarUrl,
+                  avatarInitials: avatarInitials,
+                )
               else
-                _buildIconButton(
+                buildActionIcon(
                   icon: Icons.settings_outlined,
                   onTap: onSettingsTap,
                 ),
@@ -147,7 +156,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _buildAvatar(BuildContext context) {
+  static Widget buildAvatar(BuildContext context, {
+    VoidCallback? onAvatarTap,
+    String? avatarUrl,
+    String? avatarInitials,
+  }) {
     return GestureDetector(
       onTap: onAvatarTap,
       child: Stack(
@@ -172,7 +185,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               image: avatarUrl != null
                   ? DecorationImage(
-                      image: NetworkImage(avatarUrl!),
+                      image: NetworkImage(avatarUrl),
                       fit: BoxFit.cover,
                     )
                   : null,
@@ -211,7 +224,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _buildIconButton({
+  static Widget buildActionIcon({
     required IconData icon,
     bool hasBadge = false,
     int badgeCount = 0,

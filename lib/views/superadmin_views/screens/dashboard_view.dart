@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/dashboard_controller.dart';
 import 'home_tab.dart';
+import 'profile.dart';
 import '../../../widgets/bottomnavbar.dart';
 import '../../../app/colors.dart';
 import '../../../app/routes.dart';
@@ -19,12 +20,7 @@ class DashboardView extends StatelessWidget {
       bottomNavigationBar: Obx(() => CustomBottomNavBar(
         currentIndex: controller.currentIndex.value,
         onTap: (index) {
-          if (index == 3) {
-            // Route to Profile / Settings
-            Get.toNamed(AppRoutes.securitySettings);
-          } else {
-            controller.changeTab(index);
-          }
+          controller.changeTab(index);
         },
         items: const [
           CustomNavBarItem(
@@ -38,9 +34,14 @@ class DashboardView extends StatelessWidget {
             label: 'Organization',
           ),
           CustomNavBarItem(
-            icon: Icons.card_membership_outlined,
-            activeIcon: Icons.card_membership_rounded,
-            label: 'Subscription',
+            icon: Icons.list_alt_outlined,
+            activeIcon: Icons.list_alt_rounded,
+            label: 'Plans',
+          ),
+          CustomNavBarItem(
+            icon: Icons.receipt_long_outlined,
+            activeIcon: Icons.receipt_long_rounded,
+            label: 'Invoice',
           ),
           CustomNavBarItem(
             icon: Icons.person_outline,
@@ -59,7 +60,11 @@ class DashboardView extends StatelessWidget {
       case 1:
         return const Center(child: Text('Organizations Screen (WIP)'));
       case 2:
-        return const Center(child: Text('Subscriptions Screen (WIP)'));
+        return const Center(child: Text('Plans Screen (WIP)'));
+      case 3:
+        return const Center(child: Text('Invoice Screen (WIP)'));
+      case 4:
+        return const ProfileView();
       default:
         return const Center(child: Text('WIP'));
     }

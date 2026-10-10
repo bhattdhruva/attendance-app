@@ -9,6 +9,11 @@ import '../auth/view/mfa_verify_screen.dart';
 import '../auth/view/changepassword_screen.dart';
 import '../auth/view/pin_setup_screen.dart';
 import '../auth/view/pin_verify_screen.dart';
+import '../views/superadmin_views/screens/profile.dart';
+import '../views/superadmin_views/screens/notifications_screen.dart';
+import '../views/superadmin_views/screens/active_sessions_screen.dart';
+import '../views/superadmin_views/screens/login_history_screen.dart';
+import '../views/superadmin_views/screens/settings_screen.dart';
 
 abstract class AppRoutes {
   static const String login = '/login';
@@ -21,6 +26,11 @@ abstract class AppRoutes {
   static const String changePassword = '/change-password';
   static const String pinSetup = '/pin-setup';
   static const String pinVerify = '/pin-verify';
+  static const String profile = '/profile';
+  static const String notifications = '/notifications';
+  static const String activeSessions = '/active-sessions';
+  static const String loginHistory = '/login-history';
+  static const String settings = '/settings';
 }
 
 abstract class AppPages {
@@ -41,5 +51,10 @@ abstract class AppPages {
     GetPage(name: AppRoutes.changePassword, page: () => const ChangePasswordScreen()),
     GetPage(name: AppRoutes.pinSetup, page: () => const PinSetupScreen()),
     GetPage(name: AppRoutes.pinVerify, page: () => const PinVerifyScreen()),
+    GetPage(name: AppRoutes.profile, page: () => const ProfileView()),
+    GetPage(name: AppRoutes.notifications, page: () => const NotificationsScreen()),
+    GetPage(name: AppRoutes.activeSessions, page: () => const ActiveSessionsScreen()),
+    GetPage(name: AppRoutes.loginHistory, page: () => const LoginHistoryScreen()),
+    GetPage(name: AppRoutes.settings, page: () => const SettingsScreen()),
   ];
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/pin_controller.dart';
 import '../../app/colors.dart';
+import '../../widgets/appbar.dart';
+import '../../app/routes.dart';
 
 class PinSetupScreen extends StatelessWidget {
   const PinSetupScreen({Key? key}) : super(key: key);
@@ -19,99 +21,96 @@ class PinSetupScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+      appBar: CustomAppBar(
+        title: 'Setup PIN',
+        onNotificationTap: () => Get.toNamed(AppRoutes.notifications),
+        onSettingsTap: () => Get.toNamed(AppRoutes.settings),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.inkDark),
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.inkDark, size: 20),
           onPressed: () => Get.back(),
         ),
       ),
-      body: SafeArea(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
         child: Column(
-          children: [
-            const Spacer(),
-            
-            // Text Header
-            Obx(() => Text(
-              controller.firstPin.value.isEmpty 
-                  ? 'Set a 4-digit PIN' 
-                  : 'Confirm your PIN',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.inkDark,
-              ),
-            )),
-            const SizedBox(height: 12),
-            const Text(
-              'For quick access to your dashboard',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.neutralGrey,
-              ),
+        children: [
+          // Text Header
+          Obx(() => Text(
+            controller.firstPin.value.isEmpty 
+                ? 'Set a 4-digit PIN' 
+                : 'Confirm your PIN',
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.inkDark,
             ),
-            const SizedBox(height: 32),
+          )),
+          const SizedBox(height: 12),
+          const Text(
+            'For quick access to your dashboard',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColors.neutralGrey,
+            ),
+          ),
+          const SizedBox(height: 32),
 
-            // PIN Dots
-            Obx(() => Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(4, (index) {
-                final isFilled = index < controller.enteredPin.value.length;
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isFilled 
-                        ? AppColors.primaryViolet 
-                        : (controller.hasError.value ? AppColors.accentRedDark.withOpacity(0.3) : const Color(0x338385A1)),
-                  ),
-                );
-              }),
-            )),
-            
-            const Spacer(),
-
-            // Numpad
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: AppColors.background,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(32),
-                  topRight: Radius.circular(32),
+          // PIN Dots
+          Obx(() => Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(4, (index) {
+              final isFilled = index < controller.enteredPin.value.length;
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isFilled 
+                      ? AppColors.primaryViolet 
+                      : (controller.hasError.value ? AppColors.accentRedDark.withOpacity(0.3) : const Color(0x338385A1)),
                 ),
-              ),
-              child: Column(
-                children: [
-                  _buildRow(['1', '2', '3'], controller),
-                  _buildRow(['4', '5', '6'], controller),
-                  _buildRow(['7', '8', '9'], controller),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildNumpadButton('*', isSpecial: true, onTap: () {}),
-                      _buildNumpadButton('0', onTap: () {
-                        controller.addDigit('0');
-                        if (controller.enteredPin.value.length == 4) {
-                          controller.submitSetupPin();
-                        }
-                      }),
-                      _buildNumpadButton(
-                        '#',
-                        isSpecial: true,
-                        icon: Icons.backspace_outlined,
-                        onTap: () => controller.removeDigit(),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              );
+            }),
+          )),
+          
+          const Spacer(),
+
+          // Numpad
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              borderRadius: BorderRadius.circular(16),
             ),
-          ],
-        ),
+            child: Column(
+              children: [
+                _buildRow(['1', '2', '3'], controller),
+                _buildRow(['4', '5', '6'], controller),
+                _buildRow(['7', '8', '9'], controller),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildNumpadButton('*', isSpecial: true, onTap: () {}),
+                    _buildNumpadButton('0', onTap: () {
+                      controller.addDigit('0');
+                      if (controller.enteredPin.value.length == 4) {
+                        controller.submitSetupPin();
+                      }
+                    }),
+                    _buildNumpadButton(
+                      '#',
+                      isSpecial: true,
+                      icon: Icons.backspace_outlined,
+                      onTap: () => controller.removeDigit(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       ),
     );
   }

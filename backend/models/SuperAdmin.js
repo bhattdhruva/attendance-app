@@ -12,6 +12,26 @@ const superAdminSchema = new mongoose.Schema({
     lowercase: true,
     trim: true,
   },
+  username: {
+    type: String,
+  },
+  phoneNumber: {
+    type: String,
+  },
+  avatarUrl: {
+    type: String,
+  },
+  preferences: {
+    notifications: {
+      mute: { type: Boolean, default: false },
+      push: { type: Boolean, default: true },
+      email: { type: Boolean, default: true }
+    },
+    settings: {
+      security: { type: Boolean, default: true },
+      privacy: { type: Boolean, default: true }
+    }
+  },
   passwordHash: {
     type: String,
     required: true,
