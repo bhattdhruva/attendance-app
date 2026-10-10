@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import '../../core/services/api_service.dart';
+import '../../core/utils/api_endpoints.dart';
 
 class AuthController extends GetxController {
   final ApiService _apiService = ApiService();
@@ -26,7 +27,7 @@ class AuthController extends GetxController {
   Future<bool> login(String email, String password) async {
     try {
       isLoading.value = true;
-      final response = await _apiService.client.post('/auth/login', data: {
+      final response = await _apiService.client.post(ApiEndpoints.login, data: {
         'email': email,
         'password': password,
       });
@@ -35,8 +36,18 @@ class AuthController extends GetxController {
         final token = response.data['token'];
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
-        isAuthenticated.value = true;
-        return true;
+
+        if (response.data['mfaSetupRequired'] == true) {
+          Get.offAllNamed('/mfa-setup');
+        } else if (response.data['mfaRequired'] == true) {
+          Get.toNamed('/mfa-verify');
+        } else {
+          isAuthenticated.value = true;
+          // Notice: since we call login from login_screen and await it, 
+          // we can just return true here and let the UI do `Get.offAllNamed`.
+          return true;
+        }
+        return false; // Handled by GetX routing for MFA screens
       }
       return false;
     } catch (e) {
@@ -52,11 +63,11 @@ class AuthController extends GetxController {
   Future<bool> register(String name, String email, String password, String role) async {
     try {
       isLoading.value = true;
-      final response = await _apiService.client.post('/auth/register', data: {
+      final response = await _apiService.client.post(ApiEndpoints.register, data: {
         'name': name,
         'email': email,
         'password': password,
-        'role': role, // 'user' or 'manager' or 'superadmin'
+        'role': role, // 'superadmin' or 'organization' or 'manager' or 'employee'
       });
 
       if (response.statusCode == 200 && response.data['success']) {

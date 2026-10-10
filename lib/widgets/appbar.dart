@@ -77,7 +77,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: AppColors.inkDark,
                       letterSpacing: -0.3,
                     ),
                   ),
@@ -90,7 +90,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textSecondary,
+                        color: AppColors.neutralGrey,
                         letterSpacing: 0.1,
                       ),
                     ),
@@ -107,7 +107,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textSecondary,
+                              color: AppColors.neutralGrey,
                             ),
                           ),
                         ),
@@ -158,16 +158,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.avatarPlaceholder,
+              color: AppColors.background,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.shadow,
+                  color: const Color(0x0F000000),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
               ],
               border: Border.all(
-                color: AppColors.surface,
+                color: AppColors.surfaceCard,
                 width: 2,
               ),
               image: avatarUrl != null
@@ -184,7 +184,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.avatarText,
+                        color: AppColors.inkDark,
                       ),
                     ),
                   )
@@ -197,10 +197,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               width: 12,
               height: 12,
               decoration: BoxDecoration(
-                color: AppColors.onlineBadge,
+                color: AppColors.accentTealDark,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppColors.surface,
+                  color: AppColors.surfaceCard,
                   width: 2,
                 ),
               ),
@@ -226,15 +226,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: AppColors.surfaceCard,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppColors.border,
+              color: const Color(0x338385A1),
               width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.shadow,
+                color: const Color(0x0F000000),
                 blurRadius: 10,
                 offset: const Offset(0, 3),
               ),
@@ -246,7 +246,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Icon(
                 icon,
                 size: 22,
-                color: AppColors.textSecondary,
+                color: AppColors.neutralGrey,
               ),
               if (hasBadge)
                 Positioned(
@@ -255,7 +255,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Container(
                     padding: const EdgeInsets.all(2),
                     decoration: const BoxDecoration(
-                      color: AppColors.notificationBadge,
+                      color: AppColors.accentRedDark,
                       shape: BoxShape.circle,
                     ),
                     constraints: const BoxConstraints(

@@ -1,16 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/api_endpoints.dart';
 
 class ApiService {
   late Dio _dio;
-  
-  // Note: If using Android Emulator, use 10.0.2.2 instead of localhost
-  // For iOS Simulator or Web, use localhost or 127.0.0.1
-  static const String baseUrl = 'http://10.0.2.2:5000/api/v1';
 
   ApiService() {
     _dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
+      baseUrl: ApiEndpoints.baseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {

@@ -30,9 +30,9 @@ class CustomBottomNavBar extends StatelessWidget {
     required this.currentIndex,
     required this.onTap,
     this.items,
-    this.activeColor = AppColors.navActive,
-    this.inactiveColor = AppColors.navInactive,
-    this.backgroundColor = AppColors.navBackground,
+    this.activeColor = AppColors.primaryViolet,
+    this.inactiveColor = AppColors.neutralGrey,
+    this.backgroundColor = AppColors.surfaceCard,
     this.isFloating = false,
   });
 
@@ -74,16 +74,16 @@ class CustomBottomNavBar extends StatelessWidget {
         color: backgroundColor,
         borderRadius: isFloating ? BorderRadius.circular(32) : null,
         border: isFloating
-            ? Border.all(color: AppColors.border, width: 1.5)
+            ? Border.all(color: const Color(0x338385A1), width: 1.5)
             : const Border(
                 top: BorderSide(
-                  color: AppColors.border,
+                  color: const Color(0x338385A1),
                   width: 1.2,
                 ),
               ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: const Color(0x0F000000),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, -4),
