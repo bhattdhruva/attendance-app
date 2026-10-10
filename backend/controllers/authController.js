@@ -107,6 +107,7 @@ exports.getMe = async (req, res, next) => {
       status: req.admin.status,
       mfaEnabled: req.admin.mfaEnabled,
       lastLoginAt: req.admin.lastLoginAt,
+      avatarUrl: req.admin.avatarUrl,
     };
     res.status(200).json({ success: true, data: profile });
   } catch (err) {

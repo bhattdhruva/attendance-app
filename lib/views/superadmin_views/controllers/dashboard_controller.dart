@@ -6,6 +6,7 @@ import '../../../core/services/api_service.dart';
 class DashboardController extends GetxController {
   var currentIndex = 0.obs;
   var adminName = 'Super Admin'.obs;
+  var adminAvatar = ''.obs;
   var isSearchOpen = false.obs;
   
   var metrics = {
@@ -17,7 +18,10 @@ class DashboardController extends GetxController {
     'subscriptions': '0',
   }.obs;
 
+  var revenueAnalytics = <String, dynamic>{}.obs;
   var recentOrganizations = <Map<String, dynamic>>[].obs;
+  var attentionRequired = <Map<String, dynamic>>[].obs;
+  var recentActivity = <Map<String, dynamic>>[].obs;
   var searchQuery = ''.obs;
   var filterStatus = 'All'.obs;
   var filterStartDate = Rxn<DateTime>();
@@ -52,6 +56,7 @@ class DashboardController extends GetxController {
       final response = await repository.getMe();
       if (response.statusCode == 200 && response.data['success']) {
         adminName.value = response.data['data']['fullName'] ?? 'Super Admin';
+        adminAvatar.value = response.data['data']['avatarUrl'] ?? '';
       }
     } catch (e) {
       // fallback
@@ -75,8 +80,17 @@ class DashboardController extends GetxController {
       if (response.statusCode == 200 && response.data['success']) {
         final data = response.data['data'];
         metrics.value = Map<String, String>.from(data['metrics']);
+        if (data['revenueAnalytics'] != null) {
+          revenueAnalytics.value = Map<String, dynamic>.from(data['revenueAnalytics']);
+        }
         if (data['recentOrganizations'] != null) {
           recentOrganizations.value = List<Map<String, dynamic>>.from(data['recentOrganizations']);
+        }
+        if (data['attentionRequired'] != null) {
+          attentionRequired.value = List<Map<String, dynamic>>.from(data['attentionRequired']);
+        }
+        if (data['recentActivity'] != null) {
+          recentActivity.value = List<Map<String, dynamic>>.from(data['recentActivity']);
         }
       }
     } catch (e) {

@@ -18,45 +18,16 @@ class HomeTab extends StatelessWidget {
   HomeTab({Key? key, required this.controller}) : super(key: key);
 
   Map<String, dynamic> _getData(String timeframe) {
-    switch (timeframe) {
-      case 'Today':
-        return {
-          'active': '15', 'pending': '5', 'expiring': '2',
-          'revenueTitle': 'Today\'s Revenue', 'revenueValue': '\$1.2k',
-          'chartBars': [0.1, 0.2, 0.1, 0.4, 0.3, 0.1, 0.2],
-          'xLabels': ['8am', '10a', '12p', '2pm', '4pm', '6pm', '8pm']
-        };
-      case 'Week':
-        return {
-          'active': '110', 'pending': '24', 'expiring': '12',
-          'revenueTitle': 'Weekly Revenue', 'revenueValue': '\$10.5k',
-          'chartBars': [0.4, 0.6, 0.8, 0.5, 0.9, 0.3, 0.2],
-          'xLabels': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        };
-      case 'Month':
-        return {
-          'active': '420', 'pending': '85', 'expiring': '45',
-          'revenueTitle': 'Monthly Revenue', 'revenueValue': '\$42.5k',
-          'chartBars': [0.6, 0.8, 0.5, 0.7, 0.9, 0.8, 0.9],
-          'xLabels': ['Wk1', 'Wk2', 'Wk3', 'Wk4', 'Wk5', 'Wk6', 'Wk7']
-        };
-      case 'Year':
-        return {
-          'active': '1250', 'pending': '210', 'expiring': '180',
-          'revenueTitle': 'Yearly Revenue', 'revenueValue': '\$510.2k',
-          'chartBars': [0.3, 0.5, 0.4, 0.6, 0.7, 0.9, 1.0],
-          'xLabels': ['Jan', 'Mar', 'May', 'Jul', 'Sep', 'Nov', 'Dec']
-        };
-      case 'Custom':
-        return {
-          'active': '340', 'pending': '50', 'expiring': '10',
-          'revenueTitle': 'Custom Range Revenue', 'revenueValue': '\$38.4k',
-          'chartBars': [0.5, 0.4, 0.7, 0.6, 0.9, 0.5, 0.8],
-          'xLabels': ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7']
-        };
-      default:
-        return _getData('Today');
+    if (controller.revenueAnalytics.containsKey(timeframe)) {
+      return controller.revenueAnalytics[timeframe];
     }
+    // Fallback if not loaded yet
+    return {
+      'active': '0', 'pending': '0', 'expiring': '0',
+      'revenueTitle': 'Revenue', 'revenueValue': '\$0',
+      'chartBars': [0.1, 0.1, 0.1, 0.1, 0.1],
+      'xLabels': ['1', '2', '3', '4', '5']
+    };
   }
 
   void _showFilterBottomSheet(BuildContext context) {
@@ -287,14 +258,21 @@ class HomeTab extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               GestureDetector(
-                                onTap: () => controller.changeTab(3),
+                                onTap: () => controller.changeTab(4),
                                 child: Row(
                                   children: [
-                                  const CircleAvatar(
-                                    radius: 24,
-                                    backgroundColor: Colors.white24,
-                                    child: Icon(Icons.person, color: Colors.white, size: 30),
-                                  ),
+                                  Obx(() {
+                                    final avatarUrlStr = controller.adminAvatar.value;
+                                    final String? fullAvatarUrl = avatarUrlStr.isNotEmpty
+                                        ? (avatarUrlStr.startsWith('http') ? avatarUrlStr : 'http://192.168.1.5:5000$avatarUrlStr')
+                                        : null;
+                                    return CircleAvatar(
+                                      radius: 24,
+                                      backgroundColor: Colors.white24,
+                                      backgroundImage: fullAvatarUrl != null ? NetworkImage(fullAvatarUrl) : null,
+                                      child: fullAvatarUrl == null ? const Icon(Icons.person, color: Colors.white, size: 30) : null,
+                                    );
+                                  }),
                                   const SizedBox(width: 12),
                                   Obx(() => Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,11 +358,11 @@ class HomeTab extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  _buildFloatingStat('Active', controller.metrics['subscriptions'] ?? '0', 'Plans', AppColors.accentTealDark),
+                                  _buildFloatingStat('Active', data['active'] ?? '0', 'Plans', AppColors.accentTealDark),
                                   _buildVerticalDivider(),
-                                  _buildFloatingStat('Pending', '0', 'Plans', AppColors.accentBlueDark),
+                                  _buildFloatingStat('Pending', data['pending'] ?? '0', 'Plans', AppColors.accentBlueDark),
                                   _buildVerticalDivider(),
-                                  _buildFloatingStat('Expiring', '0', 'Plans', AppColors.accentRedDark),
+                                  _buildFloatingStat('Expiring', data['expiring'] ?? '0', 'Plans', AppColors.accentRedDark),
                                 ],
                               ),
                               const SizedBox(height: 20),
@@ -606,8 +584,8 @@ class HomeTab extends StatelessWidget {
             padding: const EdgeInsets.only(top: 32.0),
             child: Obx(() {
               final data = _getData(_chartTimeframe.value);
-              final bars = data['chartBars'] as List<double>;
-              final labels = data['xLabels'] as List<String>;
+              final bars = List<double>.from(data['chartBars']?.map((e) => (e as num).toDouble()) ?? [0.1]);
+              final labels = List<String>.from(data['xLabels'] ?? ['']);
               
               final sliceValues = bars.take(5).toList();
               final sliceLabels = labels.take(5).toList();
@@ -794,20 +772,30 @@ class HomeTab extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        CustomListTile(
-          title: 'Global Logistics',
-          subtitle: 'Subscription expiring in 3 days',
-          icon: Icons.timer,
-          color: AppColors.accentRedDark,
-          onTap: () {},
-        ),
-        CustomListTile(
-          title: 'Nexus LLC',
-          subtitle: 'Payment failed for Pro Plan',
-          icon: Icons.credit_card_off,
-          color: AppColors.accentRedDark,
-          onTap: () {},
-        ),
+        Obx(() {
+          if (controller.attentionRequired.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('All good! No attention required.', style: TextStyle(color: AppColors.neutralGrey)),
+            );
+          }
+          return Column(
+            children: controller.attentionRequired.map((item) {
+              IconData icon;
+              if (item['iconType'] == 'timer') icon = Icons.timer;
+              else if (item['iconType'] == 'credit_card_off') icon = Icons.credit_card_off;
+              else icon = Icons.warning;
+              
+              return CustomListTile(
+                title: item['title'] ?? '',
+                subtitle: item['subtitle'] ?? '',
+                icon: icon,
+                color: AppColors.accentRedDark,
+                onTap: () {},
+              );
+            }).toList(),
+          );
+        }),
       ],
     );
   }
@@ -818,20 +806,38 @@ class HomeTab extends StatelessWidget {
       children: [
         const Text('Recent Platform Activity', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.inkDark)),
         const SizedBox(height: 16),
-        CustomListTile(
-          title: 'System Update',
-          subtitle: 'Version 2.4.1 deployed successfully',
-          icon: Icons.system_update_alt,
-          color: AppColors.accentBlueDark,
-          onTap: () {},
-        ),
-        CustomListTile(
-          title: 'Admin Login',
-          subtitle: 'New login from unknown IP',
-          icon: Icons.security,
-          color: AppColors.accentAmberDark,
-          onTap: () {},
-        ),
+        Obx(() {
+          if (controller.recentActivity.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('No recent activity.', style: TextStyle(color: AppColors.neutralGrey)),
+            );
+          }
+          return Column(
+            children: controller.recentActivity.map((item) {
+              IconData icon;
+              Color color;
+              if (item['iconType'] == 'business') {
+                icon = Icons.business;
+                color = AppColors.accentTealDark;
+              } else if (item['iconType'] == 'system_update_alt') {
+                icon = Icons.system_update_alt;
+                color = AppColors.accentBlueDark;
+              } else {
+                icon = Icons.info;
+                color = AppColors.primaryViolet;
+              }
+              
+              return CustomListTile(
+                title: item['title'] ?? '',
+                subtitle: item['subtitle'] ?? '',
+                icon: icon,
+                color: color,
+                onTap: () {},
+              );
+            }).toList(),
+          );
+        }),
       ],
     );
   }
